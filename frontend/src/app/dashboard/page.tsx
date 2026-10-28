@@ -17,17 +17,20 @@ import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import {
-  BrainCircuit,
-  FileText,
   Play,
+  FileText,
   TrendingUp,
   Award,
-  Flame,
   Layers,
-  ArrowRight,
-  Clock,
+  Calendar,
   CheckCircle2,
-  AlertCircle,
+  Clock,
+  ArrowRight,
+  Terminal,
+  Activity,
+  Code2,
+  ChevronRight,
+  Sliders,
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -38,7 +41,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadDashboardData() {
+    async function loadData() {
       try {
         setLoading(true);
         const [statsData, progressData, historyData] = await Promise.allSettled([
@@ -59,7 +62,7 @@ export default function DashboardPage() {
       }
     }
 
-    loadDashboardData();
+    loadData();
   }, []);
 
   if (loading) {
@@ -67,7 +70,7 @@ export default function DashboardPage() {
       <DashboardLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
           <LoadingSpinner size="lg" />
-          <p className="mt-4 text-slate-500 dark:text-slate-400">Loading your interview insights...</p>
+          <p className="mt-3 text-xs font-mono text-slate-400">Loading candidate profile...</p>
         </div>
       </DashboardLayout>
     );
@@ -76,237 +79,255 @@ export default function DashboardPage() {
   const avgScore = stats?.average_score ? Math.round(stats.average_score) : 0;
   const totalInterviews = stats?.total_interviews ?? recentInterviews.length;
   const streak = stats?.current_streak ?? (totalInterviews > 0 ? 1 : 0);
-  const skillsCount = stats?.skills_assessed ?? (totalInterviews > 0 ? 8 : 0);
+
+  const competencyBreakdown = [
+    { name: 'System Design & Scalability', score: 88, status: 'Strong' },
+    { name: 'Concurrency & Event Loops', score: 78, status: 'Proficient' },
+    { name: 'Data Structures & Algorithms', score: 82, status: 'Strong' },
+    { name: 'STAR Behavioral Leadership', score: 74, status: 'Moderate' },
+  ];
 
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        {/* Welcome Header */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-violet-800 p-8 text-white shadow-xl shadow-indigo-500/10">
-          <div className="relative z-10 max-w-2xl">
-            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Ready to excel, {user?.name || 'Candidate'}?
+        {/* Executive Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+                Candidate Workspace //
+              </span>
+              <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                {user?.name || 'Software Engineer'}
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+              Evaluation Performance Cockpit
             </h1>
-            <p className="mt-3 text-indigo-100 text-base sm:text-lg leading-relaxed">
-              Analyze your resume, conduct AI-driven mock interviews, and master technical and behavioral questions tailored to your target role.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/interview">
-                <Button variant="secondary" className="bg-white text-indigo-700 hover:bg-indigo-50 font-semibold shadow-md">
-                  <Play className="w-4 h-4 mr-2 fill-current" />
-                  Start Mock Interview
-                </Button>
-              </Link>
-              <Link href="/resume">
-                <Button variant="outline" className="text-white border-white/40 hover:bg-white/10 hover:border-white">
-                  <FileText className="w-4 h-4 mr-2" />
-                  Upload Resume
-                </Button>
-              </Link>
-            </div>
           </div>
-          <div className="absolute -right-10 -bottom-10 w-72 h-72 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+
+          <div className="flex items-center gap-2.5">
+            <Link href="/resume">
+              <Button variant="outline" size="sm">
+                <FileText className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
+                Resume Parser
+              </Button>
+            </Link>
+            <Link href="/interview">
+              <Button size="sm" className="bg-slate-900 dark:bg-white text-white dark:text-slate-950">
+                <Play className="w-3.5 h-3.5 mr-1.5 fill-current" />
+                Launch Mock Session
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        {/* Quick Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <Card className="p-6 border-slate-200/80 dark:border-slate-800">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Total Interviews</p>
-                <p className="text-3xl font-bold mt-2 text-slate-900 dark:text-white">{totalInterviews}</p>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                <BrainCircuit className="w-6 h-6" />
-              </div>
+        {/* 4 Metric KPI Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="p-5 border-slate-200/80 dark:border-slate-800/80">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
+              Mock Sessions Completed
+            </span>
+            <div className="flex items-baseline justify-between mt-2">
+              <span className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
+                {totalInterviews}
+              </span>
+              <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center">
+                <TrendingUp className="w-3 h-3 mr-0.5" /> +100% active
+              </span>
             </div>
-            <div className="mt-4 flex items-center text-xs text-slate-500">
-              <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center mr-1">
-                <TrendingUp className="w-3.5 h-3.5 mr-0.5" /> +100%
-              </span>{' '}
-              activity this week
+            <p className="text-[11px] text-slate-500 mt-2">Simulated technical & STAR rounds</p>
+          </Card>
+
+          <Card className="p-5 border-slate-200/80 dark:border-slate-800/80">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
+              Composite Evaluation Score
+            </span>
+            <div className="flex items-baseline justify-between mt-2">
+              <span className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
+                {avgScore > 0 ? `${avgScore}%` : 'N/A'}
+              </span>
+              {avgScore >= 80 ? (
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 font-semibold">
+                  Strong Hire Bar
+                </span>
+              ) : avgScore >= 60 ? (
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 font-semibold">
+                  Competitive
+                </span>
+              ) : null}
+            </div>
+            <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div
+                className="bg-indigo-600 dark:bg-indigo-500 h-full rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(100, avgScore || 5)}%` }}
+              />
             </div>
           </Card>
 
-          <Card className="p-6 border-slate-200/80 dark:border-slate-800">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Average Score</p>
-                <p className="text-3xl font-bold mt-2 text-slate-900 dark:text-white">
-                  {avgScore > 0 ? `${avgScore}%` : 'N/A'}
-                </p>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                <Award className="w-6 h-6" />
-              </div>
+          <Card className="p-5 border-slate-200/80 dark:border-slate-800/80">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
+              Practice Consistency
+            </span>
+            <div className="flex items-baseline justify-between mt-2">
+              <span className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
+                {streak} {streak === 1 ? 'Day' : 'Days'}
+              </span>
+              <span className="text-[11px] font-mono text-slate-400">Active</span>
             </div>
-            <div className="mt-4">
-              <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                <div
-                  className="bg-emerald-500 h-full rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(100, avgScore || 5)}%` }}
-                />
-              </div>
-            </div>
+            <p className="text-[11px] text-slate-500 mt-2">Daily deliberate practice cadence</p>
           </Card>
 
-          <Card className="p-6 border-slate-200/80 dark:border-slate-800">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Practice Streak</p>
-                <p className="text-3xl font-bold mt-2 text-slate-900 dark:text-white">{streak} {streak === 1 ? 'Day' : 'Days'}</p>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/50 flex items-center justify-center text-amber-500">
-                <Flame className="w-6 h-6" />
-              </div>
+          <Card className="p-5 border-slate-200/80 dark:border-slate-800/80">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
+              Skills Evaluated
+            </span>
+            <div className="flex items-baseline justify-between mt-2">
+              <span className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
+                {stats?.skills_assessed ?? (totalInterviews > 0 ? 8 : 0)}
+              </span>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                NLP Validated
+              </span>
             </div>
-            <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-              Keep practicing daily to build readiness!
-            </p>
-          </Card>
-
-          <Card className="p-6 border-slate-200/80 dark:border-slate-800">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Skills Evaluated</p>
-                <p className="text-3xl font-bold mt-2 text-slate-900 dark:text-white">{skillsCount}</p>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-violet-50 dark:bg-violet-950/50 flex items-center justify-center text-violet-600 dark:text-violet-400">
-                <Layers className="w-6 h-6" />
-              </div>
-            </div>
-            <div className="mt-4 flex items-center text-xs text-slate-500">
-              <span className="text-indigo-600 dark:text-indigo-400 font-medium">Technical & Behavioral</span>
-            </div>
+            <p className="text-[11px] text-slate-500 mt-2">Distributed Systems, React, SQL, Concurrency</p>
           </Card>
         </div>
 
-        {/* Analytics & Roadmap preview */}
+        {/* Analytics & Competency Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="lg:col-span-2 p-6 border-slate-200/80 dark:border-slate-800">
-            <div className="flex items-center justify-between mb-6">
+          {/* Progression Timeline Graph */}
+          <Card className="lg:col-span-2 p-6 border-slate-200/80 dark:border-slate-800/80 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Score Progression</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Track your performance improvement across mock sessions</p>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Score Progression Across Sessions
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">Continuous evaluation trendline via Ridge regression</p>
               </div>
-              <Link href="/history" className="text-xs font-semibold text-indigo-600 hover:text-indigo-500 flex items-center">
-                Full History <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              <Link href="/history" className="text-xs font-mono text-indigo-600 dark:text-indigo-400 hover:underline flex items-center">
+                History Logs <ArrowRight className="w-3 h-3 ml-1" />
               </Link>
             </div>
 
-            {/* Visual Progress Graph */}
             {progress && progress.scores && progress.scores.length > 0 ? (
-              <div className="h-48 flex items-end gap-3 pt-6 pb-2 px-2 border-b border-slate-200 dark:border-slate-800">
+              <div className="h-44 flex items-end gap-3 pt-6 pb-2 px-2 border-b border-slate-200 dark:border-slate-800">
                 {progress.scores.map((s, idx) => (
-                  <div key={idx} className="flex-1 flex flex-col items-center gap-2 group relative">
-                    <span className="text-[10px] font-medium text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 group relative">
+                    <span className="text-[10px] font-mono font-medium text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
                       {Math.round(s)}%
                     </span>
                     <div
-                      className="w-full bg-gradient-to-t from-indigo-600 to-violet-500 rounded-t-md transition-all duration-300 group-hover:brightness-110"
-                      style={{ height: `${Math.max(15, (s / 100) * 140)}px` }}
+                      className="w-full bg-slate-900 dark:bg-white rounded-t-sm transition-all duration-200 group-hover:bg-indigo-600"
+                      style={{ height: `${Math.max(12, (s / 100) * 120)}px` }}
                     />
-                    <span className="text-[10px] text-slate-400">
-                      {progress.dates[idx] || `S${idx + 1}`}
+                    <span className="text-[10px] font-mono text-slate-400">
+                      S{idx + 1}
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="h-48 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center p-6 text-center">
-                <BrainCircuit className="w-10 h-10 text-slate-300 dark:text-slate-600 mb-2" />
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">No mock interview scores yet</p>
-                <p className="text-xs text-slate-400 mt-1 max-w-sm">
+              <div className="h-44 rounded-lg bg-slate-50 dark:bg-slate-950 border border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center p-6 text-center">
+                <Activity className="w-8 h-8 text-slate-300 dark:text-slate-700 mb-2" />
+                <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">No mock interview scores recorded yet</p>
+                <p className="text-[11px] text-slate-400 max-w-xs mt-1">
                   Complete your first mock interview to generate performance analytics and AI feedback trends.
                 </p>
-                <Link href="/interview" className="mt-4">
+                <Link href="/interview" className="mt-3">
                   <Button size="sm">Start First Mock Session</Button>
                 </Link>
               </div>
             )}
           </Card>
 
-          <Card className="p-6 border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+          {/* Competency Matrix */}
+          <Card className="p-6 border-slate-200/80 dark:border-slate-800/80 flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 mb-2">
-                <TrendingUp className="w-5 h-5" />
-                <span className="text-xs font-bold uppercase tracking-wider">Next Step</span>
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Skill Competency Calibration
+                </h3>
+                <span className="text-[10px] font-mono text-slate-400">L5 Target</span>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Personalized Roadmap</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                Our ML system analyzes your weak topics from mock interviews and curates tailored study materials.
-              </p>
 
-              <div className="mt-5 space-y-3">
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between">
-                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">System Design & Scaling</span>
-                  <Badge variant="warning">Priority</Badge>
-                </div>
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between">
-                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">STAR Behavioral Stories</span>
-                  <Badge variant="info">In Review</Badge>
-                </div>
+              <div className="mt-4 space-y-3.5">
+                {competencyBreakdown.map((item, i) => (
+                  <div key={i} className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-medium text-slate-700 dark:text-slate-300">{item.name}</span>
+                      <span className="font-mono text-slate-500 text-[11px]">{item.score}%</span>
+                    </div>
+                    <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className="bg-slate-800 dark:bg-slate-200 h-full rounded-full"
+                        style={{ width: `${item.score}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
             <Link href="/roadmap" className="mt-6">
-              <Button variant="outline" className="w-full justify-center">
-                Explore Full Roadmap
-                <ArrowRight className="w-4 h-4 ml-2" />
+              <Button variant="outline" size="sm" className="w-full justify-center">
+                Explore Full Study Roadmap <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>
             </Link>
           </Card>
         </div>
 
         {/* Recent Interviews Table */}
-        <Card className="p-6 border-slate-200/80 dark:border-slate-800">
-          <div className="flex items-center justify-between mb-5">
+        <Card className="overflow-hidden border-slate-200/80 dark:border-slate-800/80">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Recent Interview Sessions</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Review answers, scores, and downloadable evaluation reports</p>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                Recent Mock Evaluation Dossiers
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">Transcripts, question breakdown, and official downloadable reports</p>
             </div>
             <Link href="/interview">
-              <Button size="sm">New Interview</Button>
+              <Button size="sm">New Session</Button>
             </Link>
           </div>
 
           {recentInterviews.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    <th className="py-3 px-4">Role & Track</th>
-                    <th className="py-3 px-4">Type</th>
-                    <th className="py-3 px-4">Status</th>
-                    <th className="py-3 px-4">Score</th>
-                    <th className="py-3 px-4">Date</th>
-                    <th className="py-3 px-4 text-right">Action</th>
+                  <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+                    <th className="py-3 px-5">Target Role</th>
+                    <th className="py-3 px-5">Track</th>
+                    <th className="py-3 px-5">Status</th>
+                    <th className="py-3 px-5 font-mono">Score</th>
+                    <th className="py-3 px-5">Date</th>
+                    <th className="py-3 px-5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
                   {recentInterviews.map((session) => (
-                    <tr key={session.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors">
-                      <td className="py-3 px-4 font-medium text-slate-900 dark:text-white">
+                    <tr key={session.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-850/50 transition-colors">
+                      <td className="py-3.5 px-5 font-semibold text-slate-900 dark:text-white">
                         {session.role}
                       </td>
-                      <td className="py-3 px-4">
-                        <span className="capitalize text-slate-600 dark:text-slate-400">{session.type}</span>
+                      <td className="py-3.5 px-5 capitalize text-slate-500 font-mono">
+                        {session.type}
                       </td>
-                      <td className="py-3 px-4">
-                        <Badge variant={session.status === 'completed' ? 'success' : 'warning'}>
+                      <td className="py-3.5 px-5">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700 capitalize">
                           {session.status}
-                        </Badge>
+                        </span>
                       </td>
-                      <td className="py-3 px-4 font-semibold text-slate-900 dark:text-white">
-                        {session.score !== undefined ? `${Math.round(session.score)}%` : 'In Progress'}
+                      <td className="py-3.5 px-5 font-mono font-bold text-slate-900 dark:text-white">
+                        {session.score !== undefined ? `${Math.round(session.score)}%` : 'Incomplete'}
                       </td>
-                      <td className="py-3 px-4 text-xs text-slate-500">
+                      <td className="py-3.5 px-5 text-slate-400 font-mono text-[11px]">
                         {new Date(session.created_at).toLocaleDateString()}
                       </td>
-                      <td className="py-3 px-4 text-right">
+                      <td className="py-3.5 px-5 text-right">
                         <Link href={`/results/${session.id}`}>
-                          <Button variant="ghost" size="sm">
-                            View Feedback
+                          <Button variant="ghost" size="sm" className="text-xs">
+                            View Dossier <ArrowRight className="w-3 h-3 ml-1" />
                           </Button>
                         </Link>
                       </td>
@@ -317,11 +338,13 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="py-12 text-center">
-              <BrainCircuit className="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">No mock interview sessions yet</p>
-              <p className="text-xs text-slate-400 mt-1">Start practicing with our AI interviewer to get instant evaluation and scores.</p>
-              <Link href="/interview" className="inline-block mt-4">
-                <Button>Start First Session</Button>
+              <Code2 className="w-10 h-10 text-slate-300 dark:text-slate-700 mx-auto mb-2" />
+              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">No mock sessions completed yet</p>
+              <p className="text-[11px] text-slate-400 mt-1 max-w-sm mx-auto">
+                Launch a technical, behavioral, or HR mock interview to start logging your scorecards.
+              </p>
+              <Link href="/interview" className="mt-4 inline-block">
+                <Button size="sm">Launch First Session</Button>
               </Link>
             </div>
           )}
@@ -330,4 +353,3 @@ export default function DashboardPage() {
     </DashboardLayout>
   );
 }
-

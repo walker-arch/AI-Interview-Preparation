@@ -4,17 +4,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { cn } from '@/lib/utils';
 import {
   Menu,
   X,
   Sun,
   Moon,
-  User,
+  User as UserIcon,
   LogOut,
   LayoutDashboard,
-  ChevronDown,
-  BrainCircuit,
+  Terminal,
+  FileText,
+  Play,
+  History,
+  Map,
+  ChevronRight,
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -27,14 +30,16 @@ export default function Navbar() {
   const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const dark = localStorage.getItem('theme') === 'dark' ||
-      (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const dark =
+      localStorage.getItem('theme') === 'dark' ||
+      (!localStorage.getItem('theme') &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches);
     setIsDark(dark);
     if (dark) document.documentElement.classList.add('dark');
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    const handleScroll = () => setIsScrolled(window.scrollY > 15);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -56,192 +61,190 @@ export default function Navbar() {
     document.documentElement.classList.toggle('dark', newDark);
   };
 
-  const publicLinks = [
-    { href: '/#features', label: 'Features' },
-    { href: '/#how-it-works', label: 'How It Works' },
-  ];
+  const navLinks = isAuthenticated
+    ? [
+        { href: '/dashboard', label: 'Dashboard' },
+        { href: '/interview', label: 'Practice Room' },
+        { href: '/resume', label: 'Resume Parser' },
+        { href: '/history', label: 'Evaluation History' },
+        { href: '/roadmap', label: 'Curriculum' },
+      ]
+    : [
+        { href: '/#features', label: 'Capabilities' },
+        { href: '/#methodology', label: 'Evaluation Engine' },
+        { href: '/#curriculum', label: 'Interview Tracks' },
+      ];
 
-  const authLinks = [
-    { href: '/dashboard', label: 'Dashboard' },
-    { href: '/interview', label: 'Interview' },
-    { href: '/resume', label: 'Resume' },
-    { href: '/history', label: 'History' },
-  ];
-
-  const links = isAuthenticated ? authLinks : publicLinks;
   const isLanding = pathname === '/';
 
   return (
     <nav
-      className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 border-b ${
         isScrolled || !isLanding
-          ? 'bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl shadow-sm border-b border-slate-200/50 dark:border-slate-800/50'
-          : 'bg-transparent'
-      )}
+          ? 'bg-white/95 dark:bg-[#090d16]/95 backdrop-blur-md border-slate-200 dark:border-slate-800/80 shadow-sm'
+          : 'bg-white/70 dark:bg-[#090d16]/70 backdrop-blur-sm border-transparent'
+      }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-18">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center shadow-md group-hover:shadow-glow transition-shadow duration-300">
-              <BrainCircuit className="w-5 h-5 text-white" />
+        <div className="flex items-center justify-between h-16">
+          {/* Brand Logo */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-8 h-8 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-950 flex items-center justify-center font-mono font-bold text-xs tracking-tighter shadow-sm group-hover:scale-105 transition-transform">
+              IQ
             </div>
-            <span className="text-xl font-bold text-slate-900 dark:text-white">
-              Interview<span className="gradient-text">IQ</span>
-            </span>
+            <div className="flex flex-col">
+              <span className="font-semibold text-sm tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
+                InterviewIQ
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-normal">
+                  v1.0
+                </span>
+              </span>
+            </div>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop Nav Items */}
           <div className="hidden md:flex items-center gap-1">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  'px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200',
-                  pathname === link.href
-                    ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/30'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                    isActive
+                      ? 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800/80 font-semibold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-850'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Right side */}
-          <div className="flex items-center gap-2">
-            {/* Theme toggle */}
+          {/* Right Actions */}
+          <div className="flex items-center gap-2.5">
+            {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               aria-label="Toggle theme"
+              className="p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
 
             {isAuthenticated ? (
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 transition-colors text-xs font-medium"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-sm font-bold">
-                    {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                  <div className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold">
+                    {user?.name?.[0]?.toUpperCase() || 'U'}
                   </div>
-                  <span className="hidden sm:block text-sm font-medium text-slate-700 dark:text-slate-300">
-                    {user?.name || 'User'}
+                  <span className="max-w-[100px] truncate text-slate-700 dark:text-slate-300">
+                    {user?.name?.split(' ')[0] || 'Account'}
                   </span>
-                  <ChevronDown className={cn('w-4 h-4 text-slate-400 transition-transform', isProfileOpen && 'rotate-180')} />
                 </button>
 
                 {isProfileOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 py-1 animate-scale-in">
-                    <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">{user?.name}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.email}</p>
+                  <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-dropdown py-1 z-50 animate-scale-in">
+                    <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
+                      <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">
+                        {user?.name}
+                      </p>
+                      <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
                     </div>
                     <Link
                       href="/dashboard"
-                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                       onClick={() => setIsProfileOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                     >
-                      <LayoutDashboard className="w-4 h-4" />
+                      <LayoutDashboard className="w-3.5 h-3.5" />
                       Dashboard
                     </Link>
                     <Link
-                      href="/roadmap"
-                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      href="/interview"
                       onClick={() => setIsProfileOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                     >
-                      <User className="w-4 h-4" />
-                      Learning Roadmap
+                      <Play className="w-3.5 h-3.5" />
+                      Start Mock
                     </Link>
-                    <div className="border-t border-slate-100 dark:border-slate-800 mt-1 pt-1">
-                      <button
-                        onClick={() => {
-                          logout();
-                          setIsProfileOpen(false);
-                          window.location.href = '/';
-                        }}
-                        className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        Sign Out
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        logout();
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      Sign Out
+                    </button>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="hidden sm:flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <Link
                   href="/login"
-                  className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/register"
-                  className="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-accent-600 rounded-xl hover:from-primary-700 hover:to-accent-700 shadow-md hover:shadow-lg transition-all duration-200"
+                  className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-900 dark:bg-white text-white dark:text-slate-950 hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors shadow-sm"
                 >
-                  Get Started
+                  Start Practicing
                 </Link>
               </div>
             )}
 
-            {/* Mobile menu button */}
+            {/* Mobile Hamburger */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="md:hidden p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
-
-        {/* Mobile menu */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-slate-200 dark:border-slate-800 animate-fade-in-down">
-            <div className="flex flex-col gap-1">
-              {links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    'px-4 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                    pathname === link.href
-                      ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/30'
-                      : 'text-slate-600 dark:text-slate-400'
-                  )}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              {!isAuthenticated && (
-                <>
-                  <Link
-                    href="/login"
-                    className="px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="mx-4 mt-2 px-4 py-2.5 text-center text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-accent-600 rounded-xl"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Get Started
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Mobile Drawer */}
+      {isMenuOpen && (
+        <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 pt-2 pb-4 space-y-1">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setIsMenuOpen(false)}
+              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900"
+            >
+              {link.label}
+            </Link>
+          ))}
+          {!isAuthenticated && (
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-900 flex gap-2">
+              <Link
+                href="/login"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex-1 text-center py-2 text-xs font-medium border border-slate-200 dark:border-slate-800 rounded-lg"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/register"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex-1 text-center py-2 text-xs font-medium bg-slate-900 dark:bg-white text-white dark:text-slate-950 rounded-lg"
+              >
+                Sign Up
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
     </nav>
   );
 }

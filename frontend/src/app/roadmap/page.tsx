@@ -5,21 +5,18 @@ import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import Badge from '@/components/ui/Badge';
 import ProgressBar from '@/components/ui/ProgressBar';
 import {
-  BrainCircuit,
   CheckCircle2,
   Circle,
   Play,
   ArrowRight,
   BookOpen,
-  Layers,
-  Code2,
   Server,
   Database,
-  Users2,
-  Sparkles,
+  Code2,
+  Award,
+  Layers,
 } from 'lucide-react';
 
 interface Milestone {
@@ -36,57 +33,57 @@ interface Milestone {
 const defaultMilestones: Milestone[] = [
   {
     id: 'm1',
-    title: 'Data Structures & Core Algorithmic Complexity',
+    title: 'Data Structures & Algorithmic Space-Time Complexity',
     category: 'Algorithms',
-    description: 'Arrays, Hash Maps, Linked Lists, Trees, and Big-O Space/Time trade-offs with live interview code walk-throughs.',
+    description: 'Arrays, Hash Tables, Tree traversals, Graph BFS/DFS, and Big-O memory trade-offs under high request throughput.',
     status: 'completed',
     estimatedHours: 6,
-    resources: ['Time & Space Complexity Guide', 'LeetCode Top 50 Patterns', 'Tree Traversal Cheatsheet'],
-    roleTarget: 'Software Engineer',
+    resources: ['LeetCode Top 50 Engineering Patterns', 'Time & Space Complexity Reference', 'Tree Inversion Cheatsheet'],
+    roleTarget: 'Core Software Engineering',
   },
   {
     id: 'm2',
-    title: 'Distributed System Design & Scalability Principles',
-    category: 'Architecture',
-    description: 'Horizontal vs Vertical scaling, load balancers, caching layers (Redis), database sharding, and CAP theorem trade-offs.',
+    title: 'Distributed System Architecture & Scalability',
+    category: 'System Design',
+    description: 'Horizontal vs Vertical scaling, load balancers (Layer 4 vs Layer 7), distributed Redis caching, and database replication.',
     status: 'in_progress',
     estimatedHours: 8,
-    resources: ['System Design Primer', 'Distributed Caching Strategies', 'Microservices vs Monoliths'],
-    roleTarget: 'Backend Developer',
+    resources: ['System Design Primer (Donne Martin)', 'Redis Partitioning & Eviction Topologies', 'CAP Theorem in Practice'],
+    roleTarget: 'Backend & Distributed Systems',
   },
   {
     id: 'm3',
-    title: 'Asynchronous Programming, Event Loops & Concurrency',
-    category: 'Technical Core',
-    description: 'Deep dive into asynchronous I/O, event loops, multithreading, race conditions, and non-blocking API paradigms.',
+    title: 'Asynchronous Event Loops & Concurrency Primitives',
+    category: 'Concurrency',
+    description: 'Deep dive into non-blocking I/O, Python asyncio event loops, race condition prevention, and thread pools.',
     status: 'in_progress',
     estimatedHours: 5,
-    resources: ['Python AsyncIO Mastery', 'Node.js Event Loop In-Depth', 'Thread Pools & Locks'],
-    roleTarget: 'Full Stack Developer',
+    resources: ['Python AsyncIO Internals Guide', 'Go Goroutines & Mutex Patterns', 'Deadlock Detection'],
+    roleTarget: 'Full Stack & Backend',
   },
   {
     id: 'm4',
-    title: 'STAR Method Behavioral & Crisis Management',
-    category: 'Behavioral',
-    description: 'Constructing compelling Situation, Task, Action, Result narratives for leadership, conflict resolution, and deadline crunches.',
+    title: 'STAR Method Behavioral & Crisis Postmortems',
+    category: 'Behavioral Leadership',
+    description: 'Constructing Situation, Task, Action, Result narratives for blameless outages, trade-offs under tight deadlines, and team alignment.',
     status: 'upcoming',
     estimatedHours: 4,
-    resources: ['Amazon Leadership Principles Breakdown', 'Conflict Resolution Framework', '30 STAR Story Prompts'],
-    roleTarget: 'All Roles',
+    resources: ['Amazon 16 Leadership Principles Breakdown', 'Blameless Postmortem Structure', 'STAR Scenario Prompts'],
+    roleTarget: 'All Senior Candidates',
   },
   {
     id: 'm5',
     title: 'Production SQL Query Optimization & Indexing',
     category: 'Databases',
-    description: 'B-tree index mechanics, composite indexes, query execution plan analysis (EXPLAIN ANALYZE), and database locking.',
+    description: 'B-Tree vs Hash index mechanics, composite indexing, query profiling via EXPLAIN ANALYZE, and connection pool sizing.',
     status: 'upcoming',
     estimatedHours: 5,
-    resources: ['PostgreSQL Indexing Internals', 'Query Plan Profiling Guide', 'Deadlock Prevention'],
+    resources: ['Use The Index, Luke (PostgreSQL)', 'Database Locking & Deadlocks', 'PgBouncer Tuning'],
     roleTarget: 'Backend & Data',
   },
 ];
 
-export default function RoadmapPage() {
+export default function CurriculumRoadmapPage() {
   const [activeFilter, setActiveFilter] = useState('all');
 
   const filtered = defaultMilestones.filter((m) => {
@@ -100,45 +97,49 @@ export default function RoadmapPage() {
   return (
     <DashboardLayout>
       <div className="max-w-4xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Personalized Learning Roadmap
+        {/* Header */}
+        <div className="border-b border-slate-200 dark:border-slate-800 pb-5">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
+            Curriculum Roadmap // Directed Study
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white mt-1">
+            Personalized Engineering Curriculum
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Dynamically synthesized based on your resume skill gaps and mock interview scores.
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Synthesized based on your resume skill gaps and identified weak areas across mock interviews.
           </p>
         </div>
 
-        {/* Roadmap Progress Card */}
-        <Card className="p-6 sm:p-8 border-slate-200/80 dark:border-slate-800 bg-gradient-to-r from-indigo-50/60 to-violet-50/60 dark:from-indigo-950/20 dark:to-violet-950/20">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+        {/* Linear Progress Card */}
+        <Card className="p-6 border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                Curriculum Progress
+              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                Target Objective
               </span>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">
-                Target Role: Full Stack Software Engineer
+              <h2 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
+                Full Stack & Distributed Systems Mastery
               </h2>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
+              <span className="text-2xl font-bold font-mono text-slate-900 dark:text-white">
                 {progressPercent}%
               </span>
-              <span className="text-xs text-slate-500">Completed</span>
+              <span className="text-xs font-mono text-slate-400">Completed</span>
             </div>
           </div>
-          <ProgressBar value={progressPercent} size="md" />
+          <ProgressBar value={progressPercent} size="sm" />
         </Card>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {['all', 'in_progress', 'completed', 'upcoming'].map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold capitalize transition-all ${
+              className={`px-3 py-1 rounded-md text-[11px] font-mono capitalize transition-colors ${
                 activeFilter === filter
-                  ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/25'
+                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-semibold shadow-xs'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -147,8 +148,8 @@ export default function RoadmapPage() {
           ))}
         </div>
 
-        {/* Milestones Timeline */}
-        <div className="space-y-4">
+        {/* Milestone Cards */}
+        <div className="space-y-3.5">
           {filtered.map((item, idx) => {
             const isCompleted = item.status === 'completed';
             const isInProgress = item.status === 'in_progress';
@@ -156,51 +157,50 @@ export default function RoadmapPage() {
             return (
               <Card
                 key={item.id}
-                className={`p-6 border-slate-200/80 dark:border-slate-800 transition-all ${
-                  isInProgress ? 'ring-2 ring-indigo-500/20 shadow-md' : ''
+                className={`p-5 border-slate-200/80 dark:border-slate-800/80 transition-all ${
+                  isInProgress ? 'ring-1 ring-slate-900 dark:ring-white bg-slate-50/40 dark:bg-slate-900/60' : ''
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                  <div className="flex items-start gap-3.5">
-                    <div className="mt-1">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex-shrink-0">
                       {isCompleted ? (
-                        <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                       ) : isInProgress ? (
-                        <div className="w-5 h-5 rounded-full border-2 border-indigo-600 flex items-center justify-center">
-                          <div className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
+                        <div className="w-4 h-4 rounded-full border-2 border-slate-900 dark:border-white flex items-center justify-center">
+                          <div className="w-1.5 h-1.5 rounded-full bg-slate-900 dark:bg-white animate-pulse" />
                         </div>
                       ) : (
-                        <Circle className="w-5 h-5 text-slate-300 dark:text-slate-700" />
+                        <Circle className="w-4 h-4 text-slate-300 dark:text-slate-700" />
                       )}
                     </div>
 
-                    <div>
+                    <div className="space-y-1.5">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        <span className="text-[10px] font-mono text-slate-400 uppercase">
                           Module 0{idx + 1}
                         </span>
                         <span className="text-slate-300 dark:text-slate-700">•</span>
-                        <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400">
+                        <span className="text-[11px] font-mono text-indigo-600 dark:text-indigo-400 font-medium">
                           {item.category}
                         </span>
                       </div>
 
-                      <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
+                      <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
                         {item.title}
                       </h3>
-                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
                         {item.description}
                       </p>
 
-                      {/* Resource links */}
-                      <div className="mt-4 flex flex-wrap items-center gap-2">
-                        <span className="text-[11px] font-semibold text-slate-400 mr-1 flex items-center gap-1">
-                          <BookOpen className="w-3 h-3" /> Curated Resources:
+                      <div className="pt-2 flex flex-wrap items-center gap-1.5">
+                        <span className="text-[10px] font-mono text-slate-400 mr-1 flex items-center gap-1">
+                          <BookOpen className="w-3 h-3" /> References:
                         </span>
                         {item.resources.map((res, rIdx) => (
                           <span
                             key={rIdx}
-                            className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                            className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700"
                           >
                             {res}
                           </span>
@@ -210,17 +210,21 @@ export default function RoadmapPage() {
                   </div>
 
                   <div className="flex flex-col items-end justify-between gap-3 flex-shrink-0 pt-2 sm:pt-0">
-                    <Badge
-                      variant={
-                        isCompleted ? 'success' : isInProgress ? 'info' : 'neutral'
-                      }
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium capitalize border ${
+                        isCompleted
+                          ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                          : isInProgress
+                          ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700'
+                      }`}
                     >
                       {item.status.replace('_', ' ')}
-                    </Badge>
+                    </span>
 
                     <Link href="/interview">
-                      <Button size="sm" variant={isInProgress ? 'primary' : 'outline'}>
-                        <Play className="w-3.5 h-3.5 mr-1.5 fill-current" />
+                      <Button size="sm" variant={isInProgress ? 'primary' : 'outline'} className="text-xs">
+                        <Play className="w-3 h-3 mr-1 fill-current" />
                         Practice Module
                       </Button>
                     </Link>
@@ -234,4 +238,3 @@ export default function RoadmapPage() {
     </DashboardLayout>
   );
 }
-

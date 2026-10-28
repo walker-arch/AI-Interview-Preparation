@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth-context';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Alert from '@/components/ui/Alert';
-import { Sparkles, ArrowRight, Lock, Mail, User as UserIcon } from 'lucide-react';
+import { Lock, Mail, User as UserIcon, ArrowRight } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -45,35 +45,35 @@ export default function RegisterPage() {
       await register(name, email, password);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err?.detail || err?.message || 'Registration failed. Please try again.');
+      setError(err?.detail || err?.message || 'Registration failed.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Link href="/" className="flex items-center justify-center gap-2 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
-            <Sparkles className="w-5 h-5" />
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#090d16] flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-slate-900 dark:text-white">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
+          <div className="w-8 h-8 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-950 flex items-center justify-center font-mono font-bold text-xs tracking-tight shadow-sm">
+            IQ
           </div>
-          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400">
-            InterviewIQ AI
+          <span className="font-semibold text-base tracking-tight text-slate-900 dark:text-white">
+            InterviewIQ
           </span>
         </Link>
-        <h2 className="text-center text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-          Create your account
+        <h2 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
+          Create candidate account
         </h2>
-        <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
-          Get personalized mock interviews, instant ML scoring, and career roadmaps
+        <p className="mt-1 text-xs text-slate-500 font-mono">
+          Free access to calibrated technical & behavioral mock evaluations
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-        <div className="bg-white dark:bg-slate-900 py-8 px-6 shadow-xl shadow-slate-200/50 dark:shadow-none sm:rounded-2xl sm:px-10 border border-slate-100 dark:border-slate-800">
+        <div className="bg-white dark:bg-slate-900 py-8 px-6 sm:px-10 rounded-xl border border-slate-200 dark:border-slate-800 shadow-card">
           {error && (
-            <div className="mb-6">
+            <div className="mb-5">
               <Alert type="error" message={error} onClose={() => setError(null)} />
             </div>
           )}
@@ -84,27 +84,27 @@ export default function RegisterPage() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Alex Johnson"
+              placeholder="e.g. Alex Johnson"
               icon={UserIcon}
               required
             />
 
             <Input
-              label="Email address"
+              label="Email Address"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder="candidate@example.com"
               icon={Mail}
               required
             />
 
             <Input
-              label="Password"
+              label="Password (min 6 chars)"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Minimum 6 characters"
+              placeholder="••••••••"
               icon={Lock}
               required
             />
@@ -114,33 +114,34 @@ export default function RegisterPage() {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Re-enter password"
+              placeholder="••••••••"
               icon={Lock}
               required
             />
 
             <div className="pt-2">
-              <Button type="submit" className="w-full justify-center" isLoading={loading}>
-                Create Account
-                <ArrowRight className="w-4 h-4 ml-2" />
+              <Button
+                type="submit"
+                className="w-full justify-center bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-semibold"
+                isLoading={loading}
+              >
+                Create Account & Enter Workspace
+                <ArrowRight className="w-3.5 h-3.5 ml-2" />
               </Button>
             </div>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 text-center">
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Already have an account?{' '}
-              <Link
-                href="/login"
-                className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 transition-colors"
-              >
-                Sign in
-              </Link>
-            </p>
+          <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-500">
+            Already have an account?{' '}
+            <Link
+              href="/login"
+              className="font-medium text-slate-900 dark:text-white hover:underline"
+            >
+              Sign in
+            </Link>
           </div>
         </div>
       </div>
     </div>
   );
 }
-
