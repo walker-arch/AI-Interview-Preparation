@@ -1,0 +1,20 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+node_modules/
+.next/
+*.egg-info/
+dist/
+build/
+uploads/
+*.db
+*.sqlite3
+.pytest_cache/
+.ipynb_checkpoints/
+*.joblib
+# Allow trained lightweight models
+!models/*.joblib
+.DS_Store
+Thumbs.db
+
